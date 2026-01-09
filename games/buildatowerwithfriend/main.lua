@@ -1,4 +1,4 @@
---Direitos de Notty0001
+-- Direitos de Notty0001
 local success, Library = pcall(function()
 	return loadstring(game:HttpGet("https://raw.githubusercontent.com/Nottyzada/nottyhub/refs/heads/main/assets/visual.lua"))()
 end)
@@ -13,13 +13,8 @@ if not success or not Library then
 	end
 end
 
-local successModule, AutoFarmModule = pcall(function()
-	return loadstring(game:HttpGet("https://raw.githubusercontent.com/Nottyzada/nottyhub/refs/heads/main/games/buildatowerwithfriend/functions/autofarm.lua"))()
-end)
-
-if not successModule or not AutoFarmModule then
-	error("Falha ao carregar o modulo de AutoFarm: " .. tostring(AutoFarmModule))
-end
+-- Carregar o módulo de AutoFarm CORRETAMENTE
+local AutoFarmModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Nottyzada/nottyhub/refs/heads/main/modules/autofarm.lua"))()
 
 local MarketPlaceService = game:GetService("MarketplaceService")
 local placeName = MarketPlaceService:GetProductInfo(game.PlaceId).Name
@@ -33,13 +28,18 @@ local function CollectRewards()
 end
 
 local function ResetCharacter()
+	local Players = game:GetService("Players")
+	local player = Players.LocalPlayer
+	if player.Character then
+		player.Character:BreakJoints()
+	end
 end
 
 local AutoFarmTab = Library:CreateTab("AutoFarm", false, "rbxassetid://123456789")
 AutoFarmTab:AddSection("Controles de AutoFarm")
 
+-- Toggle para ligar/desligar o AutoFarm
 AutoFarmTab:AddToggle("Ativar AutoFarm", "autofarm_enabled", function(state)
-	AutoFarmModule.Enabled = state
 	if state then
 		AutoFarmModule:Start()
 	else
@@ -48,8 +48,8 @@ AutoFarmTab:AddToggle("Ativar AutoFarm", "autofarm_enabled", function(state)
 end)
 
 AutoFarmTab:AddKeybind("Atalho AutoFarm", "autofarm_keybind", function()
-	AutoFarmModule.Enabled = not AutoFarmModule.Enabled
-	if AutoFarmModule.Enabled then
+	local currentState = AutoFarmModule.Enabled or false
+	if not currentState then
 		AutoFarmModule:Start()
 	else
 		AutoFarmModule:Stop()
@@ -57,7 +57,9 @@ AutoFarmTab:AddKeybind("Atalho AutoFarm", "autofarm_keybind", function()
 end)
 
 AutoFarmTab:AddSlider("Velocidade de Farm", 1, 100, 50, function(value)
-	AutoFarmModule:UpdateSpeed(value)
+	if AutoFarmModule.UpdateSpeed then
+		AutoFarmModule:UpdateSpeed(value)
+	end
 end)
 
 local TeleportTab = Library:CreateTab("Teleportes", false, "rbxassetid://123456789")
