@@ -14,7 +14,7 @@ if not success or not Library then
 end
 
 -- Carregar o módulo de AutoFarm CORRETAMENTE
-local AutoFarmModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Nottyzada/nottyhub/refs/heads/main/modules/autofarm.lua"))()
+--local AutoFarmModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/Nottyzada/nottyhub/refs/heads/main/modules/autofarm.lua"))()
 
 local MarketPlaceService = game:GetService("MarketplaceService")
 local placeName = MarketPlaceService:GetProductInfo(game.PlaceId).Name
