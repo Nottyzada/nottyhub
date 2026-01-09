@@ -151,7 +151,8 @@ end
 local function performUpgrade(typeName)
     local data = UPGRADE_DATA[typeName]
     local currentVal = data.folder:GetAttribute(typeName) or data.start
-    if (data.max and currentVal >= data.max) or (data.min and currentVal <= data.min) then return false end
+    -- Removida a trava de Max/Min para permitir upgrades contínuos enquanto o jogo permitir
+    -- if (data.max and currentVal >= data.max) or (data.min and currentVal <= data.min) then return false end
     
     local price = getUpgradePrice(typeName)
     if math.floor(playerTBP.Value) >= price then
@@ -195,7 +196,17 @@ function Module:SetAutoFarm(state)
                 end
                 
                 -- Meta Check
-                if Module.Flags.Meta.Modo == "Saldo" and math.floor(playerTBP.Value) >= Module.Flags.Meta.Valor then
+                local metaModo = Module.Flags.Meta.Modo
+                local metaValor = Module.Flags.Meta.Valor
+                
+                if metaModo == "Torre" and math.floor(playerTBP.Value) >= metaValor then
+                    Module:SetAutoFarm(false)
+                    break
+                elseif metaModo == "Coins" and player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins") and player.leaderstats.Coins.Value >= metaValor then
+                    Module:SetAutoFarm(false)
+                    break
+                elseif metaModo == "Tijolos" and player:FindFirstChild("TBP_Placed") and player.TBP_Placed.Value >= metaValor then
+                    -- Nota: Assumindo que TBP_Placed ou similar rastreia tijolos colocados
                     Module:SetAutoFarm(false)
                     break
                 end
